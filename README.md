@@ -1,1 +1,3 @@
-# Use pico.css and Bootstrap utility classes only for basic CSS.
+# crud-client
+
+Basic crud client for testing. Use with crud-api
