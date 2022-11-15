@@ -1,17 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { fetchHelper } from './helpers'
 
-const BASE_URL = 'https://dev-rest-api.herokuapp.com/posts/'
+const BAD_URL = 'http://localhost:4000/postsx/'
+const BASE_URL = 'http://localhost:4000/posts/'
 
 function Todo() {
+  const dialogRef = useRef()
   const [date, setDate] = useState(new Date())
   const [url, setUrl] = useState(BASE_URL)
   const [item, setItem] = useState({ name: '' })
   const [items, setItems] = useState({})
+  const [originalItems, setOriginalItems] = useState({})
   const [editId, setEditId] = useState()
+  const [viewItem, setViewItem] = useState({})
   const [error, setError] = useState()
 
-  const updateError = (response) => {
+  const updateError = async (response) => {
+    let json = {}
+    try {
+      json = await response.json()
+    } catch {}
     setError({
+      message: json.error,
       ok: response.ok,
       status: response.status,
       statusText: response.statusText,
@@ -23,7 +33,7 @@ function Todo() {
     ;(async () => {
       setError()
       try {
-        const response = await fetch(url)
+        const response = await fetchHelper(url)
         if (response.ok) {
           const json = await response.json()
           const formattedJson = json.reduce(
@@ -43,11 +53,12 @@ function Todo() {
 
   const onEditSave = async (item) => {
     if (editId !== item.id) {
+      setOriginalItems(items)
       setEditId(item.id)
     } else {
       try {
         setError()
-        const response = await fetch(`${url}${item.id}`, {
+        const response = await fetchHelper(`${url}${item.id}`, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -61,20 +72,21 @@ function Todo() {
             modifiedDate: '2016-01-01',
           }),
         })
-        if (!response.ok) {
+        if (response.ok) {
+          setEditId()
+        } else {
           throw response
         }
       } catch (error) {
         updateError(error)
       }
-      setEditId()
     }
   }
 
   const onDelete = async (item) => {
     try {
       setError()
-      const response = await fetch(`${url}${item.id}`, {
+      const response = await fetchHelper(`${url}${item.id}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -104,7 +116,7 @@ function Todo() {
         modifiedById: 2,
         modifiedDate: formattedDate,
       }
-      const response = await fetch(url, {
+      const response = await fetchHelper(url, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -119,7 +131,22 @@ function Todo() {
         throw response
       }
     } catch (error) {
-      setItems({})
+      updateError(error)
+    }
+  }
+
+  const onView = async (id) => {
+    try {
+      setError()
+      const response = await fetchHelper(`${url}${id}`)
+      if (response.ok) {
+        const json = await response.json()
+        setViewItem(json)
+        dialogRef.current.showModal()
+      } else {
+        throw response
+      }
+    } catch (error) {
       updateError(error)
     }
   }
@@ -136,17 +163,11 @@ function Todo() {
           Edit or Delete the item "EDIT CAUSES ERROR" or "DELETE CAUSES ERROR"
         </li>
         <li>Add an item called "ADD CAUSES ERROR"</li>
+        <li>Get and item called "GET CAUSES ERROR"</li>
       </ul>
       <hr />
       <div className="grid">
-        <button
-          onClick={() =>
-            setUrl(
-              url === BASE_URL
-                ? 'https://dev-rest-api.herokuapp.com/postsx/'
-                : BASE_URL
-            )
-          }>
+        <button onClick={() => setUrl(url === BASE_URL ? BAD_URL : BASE_URL)}>
           Toggle ({url === BASE_URL ? 'GOOD' : 'BAD'})
         </button>
         <button onClick={() => setDate(new Date())}>GET</button>
@@ -155,23 +176,43 @@ function Todo() {
       <h2>TODOS</h2>
       {Object.values(items).map((item) => {
         return (
-          <div className="grid" key={item.id}>
-            {editId !== item.id && <div>{item.name}</div>}
-            {editId === item.id && (
-              <input
-                value={item.name}
-                onChange={(event) =>
-                  setItems({
-                    ...items,
-                    [item.id]: { ...item, name: event.target.value },
-                  })
-                }
-              />
-            )}
-            <button onClick={() => onEditSave(item)}>
-              {editId !== item.id ? 'Edit' : 'Save'}
-            </button>
-            <button onClick={() => onDelete(item)}>Delete</button>
+          <div className="row" key={item.id}>
+            <div className="col-4">
+              {editId !== item.id && <div>{item.name}</div>}
+              {editId === item.id && (
+                <input
+                  value={item.name}
+                  onChange={(event) =>
+                    setItems({
+                      ...items,
+                      [item.id]: { ...item, name: event.target.value },
+                    })
+                  }
+                />
+              )}
+            </div>
+            <div className="col-8">
+              <div className="grid">
+                <button onClick={() => onEditSave(item)}>
+                  {editId !== item.id ? 'Edit (PUT)' : 'Save'}
+                </button>
+                <button
+                  disabled={editId !== item.id}
+                  onClick={() => {
+                    setEditId()
+                    setItems(originalItems)
+                  }}>
+                  Cancel
+                </button>
+                <button onClick={() => onDelete(item)}>DELETE</button>
+                <button
+                  onClick={() => {
+                    onView(item.id)
+                  }}>
+                  View (GET)
+                </button>
+              </div>
+            </div>
           </div>
         )
       })}
@@ -185,6 +226,40 @@ function Todo() {
           Add
         </button>
       </div>
+
+      <dialog id="view-dialog" ref={dialogRef}>
+        <form className="w-50" method="dialog">
+          <article>
+            <header>
+              <a
+                aria-label="Close"
+                className="close"
+                onClick={() => {
+                  dialogRef.current.close()
+                  setViewItem({})
+                }}
+              />
+              Item Details
+            </header>
+            <table>
+              <thead>
+                <tr>
+                  <th>Property</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(viewItem)?.map(([key, value]) => (
+                  <tr key={key}>
+                    <td>{key}</td>
+                    <td>{value.toString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </article>
+        </form>
+      </dialog>
       {error && (
         <>
           Error
@@ -193,9 +268,6 @@ function Todo() {
           </pre>
         </>
       )}
-      <pre>
-        <code>{JSON.stringify(items, null, 2)}</code>
-      </pre>
     </div>
   )
 }
