@@ -1,4 +1,5 @@
 import { ApplicationInsights } from '@microsoft/applicationinsights-web'
+import { getSession } from './helpers/sessionHelper'
 
 let appInsights
 
@@ -11,6 +12,10 @@ if (!appInsights) {
 
   appInsights.loadAppInsights()
   appInsights.trackPageView()
+  const session = getSession()
+  appInsights.context.session.id = session.id
 }
+
+window.appInsights = appInsights
 
 export { appInsights }

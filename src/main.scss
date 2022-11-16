@@ -1,0 +1,11 @@
+:root {
+  --typography-spacing-vertical: 0.25rem !important;
+  --form-element-spacing-vertical: 0.25rem !important;
+}
+
+h1,
+h2 {
+  --typography-spacing-vertical: 0.25rem !important;
+}
+
+@import '@picocss/pico/scss/pico';
