@@ -4,11 +4,10 @@ import 'bootstrap/dist/css/bootstrap-utilities.min.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-// import PicoExample from './PicoExample'
+import './appInsights'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />
-    {/* <PicoExample /> */}
   </React.StrictMode>
 )

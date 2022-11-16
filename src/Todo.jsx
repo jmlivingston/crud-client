@@ -125,6 +125,7 @@ function Todo() {
       })
       if (response.ok) {
         const json = await response.json()
+        setOriginalItems({ ...originalItems, [json.id]: json })
         setItems({ ...items, [json.id]: json })
         setItem({ name: '' })
       } else {
@@ -222,7 +223,7 @@ function Todo() {
           value={item?.name}
           onChange={(event) => setItem({ name: event.target.value })}
         />
-        <button disabled={!item} onClick={() => onAdd()}>
+        <button disabled={!item?.name} onClick={() => onAdd()}>
           Add
         </button>
       </div>
