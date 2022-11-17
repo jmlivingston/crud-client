@@ -14,7 +14,7 @@ function Todo() {
   const [url, setUrl] = useState(BASE_URL)
   const [todo, setTodo] = useState({ name: '' })
   const [todos, setTodos] = useState({})
-  const [originalTodos, setoriginalTodos] = useState({})
+  const [originalTodos, setOriginalTodos] = useState({})
   const [editId, setEditId] = useState()
   const [viewTodo, setViewTodo] = useState({})
   const [error, setError] = useState()
@@ -57,7 +57,7 @@ function Todo() {
 
   const onUpdate = async (todo) => {
     if (editId !== todo.id) {
-      setoriginalTodos(todos)
+      setOriginalTodos(todos)
       setEditId(todo.id)
     } else {
       try {
@@ -120,7 +120,7 @@ function Todo() {
       })
       if (response.ok) {
         const json = await response.json()
-        setoriginalTodos({ ...originalTodos, [json.id]: json })
+        setOriginalTodos({ ...originalTodos, [json.id]: json })
         setTodos({ ...todos, [json.id]: json })
         setTodo({ name: '' })
       } else {
@@ -153,7 +153,7 @@ function Todo() {
       <div className="grid">
         <button
           onClick={() => setUrl(url === BASE_URL ? BASE_URL_BROKEN : BASE_URL)}>
-          Toggle Base URL ({url === BASE_URL ? 'GOOD' : 'BAD'})
+          Toggle Base URL ({url === BASE_URL ? 'VALID' : 'INVALID'})
         </button>
         <button onClick={() => setRefresh(new Date())}>GET</button>
       </div>
@@ -192,6 +192,7 @@ function Todo() {
         title="Todo Details">
         <TodoDetails todo={viewTodo} />
       </Modal>
+      {error && <hr />}
       <Code code={error} title="Error" />
       <hr />
       <Session />

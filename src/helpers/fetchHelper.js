@@ -2,11 +2,13 @@ import { appInsights } from '../appInsights'
 
 const fetchHelper = async (resource, options) => {
   let response
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+    SessionId: appInsights.context.session.id,
+  })
   const updatedOptions = {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
   }
   try {
     appInsights.trackEvent({ request: { resource, options: updatedOptions } })
