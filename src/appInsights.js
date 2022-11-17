@@ -1,5 +1,5 @@
 import { ApplicationInsights } from '@microsoft/applicationinsights-web'
-import { getSession } from './helpers/sessionHelper'
+import { getAppInsightsInfo } from './helpers/storageHelper'
 
 let appInsights
 
@@ -12,8 +12,8 @@ if (!appInsights) {
 
   appInsights.loadAppInsights()
   appInsights.trackPageView()
-  const session = getSession()
-  appInsights.context.session.id = session.id
+  const info = getAppInsightsInfo()
+  // appInsights.context.operation.id = info.operation.id TODO
 }
 
 window.appInsights = appInsights

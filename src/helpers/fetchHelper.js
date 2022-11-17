@@ -4,7 +4,7 @@ const fetchHelper = async (resource, options) => {
   let response
   const headers = new Headers({
     'Content-Type': 'application/json',
-    SessionId: appInsights.context.session.id,
+    // Operation: appInsights.context.operation.id, // TODO
   })
   const updatedOptions = {
     ...options,

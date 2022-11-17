@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
+import AppInsightsInfo from './AppInsightsInfo'
 import Code from './Code'
 import { BASE_URL, BASE_URL_BROKEN } from './CONSTANTS'
 import { fetchHelper } from './helpers/fetchHelper'
 import Modal from './Modal'
-import Session from './Session'
 import TodoDetails from './TodoDetails'
 import TodoHeader from './TodoHeader'
 import TodoRow from './TodoRow'
@@ -195,7 +195,7 @@ function Todo() {
       {error && <hr />}
       <Code code={error} title="Error" />
       <hr />
-      <Session />
+      <AppInsightsInfo />
     </div>
   )
 }
