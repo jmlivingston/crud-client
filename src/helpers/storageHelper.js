@@ -10,9 +10,10 @@ const setAppInsightsInfo = () => {
 const isInfoValid = (info) => info?.session?.id !== undefined
 
 const getAppInsightsInfo = () => {
-  let info = localStorage.getItem(STORAGE_KEYS.APP_INSIGHTS_INFO)
+  const infoString = localStorage.getItem(STORAGE_KEYS.APP_INSIGHTS_INFO)
+  let info = infoString ? JSON.parse(infoString) : {}
   if (isInfoValid(info)) {
-    return JSON.parse(info)
+    return info
   } else {
     info = setAppInsightsInfo()
   }
