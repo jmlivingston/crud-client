@@ -15,7 +15,7 @@ function Todo() {
   const [todo, setTodo] = useState({ name: '' })
   const [todos, setTodos] = useState({})
   const [originalTodos, setOriginalTodos] = useState({})
-  const [editId, setEditId] = useState()
+  const [putId, setPutId] = useState()
   const [viewTodo, setViewTodo] = useState({})
   const [error, setError] = useState()
 
@@ -56,9 +56,9 @@ function Todo() {
   }
 
   const onUpdate = async (todo) => {
-    if (editId !== todo.id) {
+    if (putId !== todo.id) {
       setOriginalTodos(todos)
-      setEditId(todo.id)
+      setPutId(todo.id)
     } else {
       try {
         setError()
@@ -74,7 +74,7 @@ function Todo() {
           }),
         })
         if (response.ok) {
-          setEditId()
+          setPutId()
         } else {
           throw response
         }
@@ -161,14 +161,14 @@ function Todo() {
       <h2>Todos</h2>
       {Object.values(todos).map((todo) => (
         <TodoRow
-          editId={editId}
+          putId={putId}
           todos={todos}
           key={todo.id}
           onDelete={onDelete}
           onUpdate={onUpdate}
           onView={onView}
           originalTodos={originalTodos}
-          setEditId={setEditId}
+          setPutId={setPutId}
           setTodos={setTodos}
           todo={todo}
         />
@@ -180,7 +180,7 @@ function Todo() {
           onChange={(event) => setTodo({ name: event.target.value })}
         />
         <button disabled={!todo?.name} onClick={() => onAdd()}>
-          Add
+          POST
         </button>
       </div>
       <Modal

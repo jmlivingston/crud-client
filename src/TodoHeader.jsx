@@ -12,11 +12,25 @@ const TodoHeader = () => {
           Toggle base URL to INVALID, then try getting, editing, deleting, or
           adding.
         </li>
-        <li>Edit or Delete the todo with "EDIT ERROR" or "DELETE ERROR"</li>
-        <li>Add a todo called "ADD ERROR"</li>
-        <li>Get a todo called "GET ERROR"</li>
+        <li>PUT or DELETE the todo with "PUT ERROR" or "DELETE ERROR"</li>
+        <li>POST a todo called "POST ERROR"</li>
+        <li>GET a todo called "GET ERROR"</li>
       </ul>
-      <p>Note: Backend refreshes data any time it gets restarted.</p>
+      <small>
+        Notes:{' '}
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods"
+              target="_blank">
+              HTTP verbs
+            </a>{' '}
+            are used to describe CRUD operations: POST (create), GET (read), PUT
+            (update), and DELETE (delete).
+          </li>
+          <li>Backend refreshes data any time it gets restarted.</li>
+        </ul>
+      </small>
     </>
   )
 }

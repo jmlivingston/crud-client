@@ -1,12 +1,12 @@
 import React from 'react'
 
 const TodoRow = ({
-  editId,
+  putId,
   onDelete,
   onUpdate,
   onView,
   originalTodos,
-  setEditId,
+  setPutId,
   setTodos,
   todo,
   todos,
@@ -14,8 +14,8 @@ const TodoRow = ({
   return (
     <div className="row">
       <div className="col-4">
-        {editId !== todo.id && <div>{todo.name}</div>}
-        {editId === todo.id && (
+        {putId !== todo.id && <div>{todo.name}</div>}
+        {putId === todo.id && (
           <input
             value={todo.name}
             onChange={(event) =>
@@ -30,12 +30,12 @@ const TodoRow = ({
       <div className="col-8">
         <div className="grid">
           <button onClick={() => onUpdate(todo)}>
-            {editId !== todo.id ? 'Edit (PUT)' : 'Save'}
+            {putId !== todo.id ? 'Edit' : 'PUT'}
           </button>
           <button
-            disabled={editId !== todo.id}
+            disabled={putId !== todo.id}
             onClick={() => {
-              setEditId()
+              setPutId()
               setTodos(originalTodos)
             }}>
             Cancel
@@ -45,7 +45,7 @@ const TodoRow = ({
             onClick={() => {
               onView(todo.id)
             }}>
-            View (GET)
+            GET
           </button>
         </div>
       </div>
