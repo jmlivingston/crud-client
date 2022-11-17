@@ -7,7 +7,7 @@ const AppInsightsInfo = () => {
   const [appInsightsInfo, setAppInsightsInfo] = useState(getAppInsightsInfo())
   const onsetAppInsightsInfo = () => {
     const info = setAppInsightsInfo()
-    // appInsights.context.operation.id = info.operation.id // TODO
+    appInsights.context.session.id = info.session.id
     setAppInsightsInfo(info)
   }
   return (

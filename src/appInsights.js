@@ -13,7 +13,7 @@ if (!appInsights) {
   appInsights.loadAppInsights()
   appInsights.trackPageView()
   const info = getAppInsightsInfo()
-  // appInsights.context.operation.id = info.operation.id TODO
+  appInsights.context.session.id = info.session.id
 }
 
 window.appInsights = appInsights

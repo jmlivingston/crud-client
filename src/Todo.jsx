@@ -148,7 +148,7 @@ function Todo() {
   }
 
   return (
-    <div className="container">
+    <>
       <TodoHeader />
       <div className="grid">
         <button
@@ -196,7 +196,7 @@ function Todo() {
       <Code code={error} title="Error" />
       <hr />
       <AppInsightsInfo />
-    </div>
+    </>
   )
 }
 
