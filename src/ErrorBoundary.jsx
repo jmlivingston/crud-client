@@ -1,5 +1,10 @@
 import React, { Component } from 'react'
-import { appInsights } from './appInsights'
+import { v4 as uuidv4 } from 'uuid'
+import {
+  appInsights,
+  APP_INSIGHTS_QUERIES,
+  logAppInsightsQueryUrl,
+} from './appInsights'
 import Code from './Code'
 import { STORAGE_KEYS } from './CONSTANTS'
 
@@ -23,11 +28,21 @@ class ErrorBoundary extends Component {
     }
     const combinedError = { error, errorInfo: errorInfoFormatted }
     this.setState({ error: combinedError })
+    const appInsightsContextSessionId = appInsights.context.session.id
+    const appInsightsPropertiesRequestId = uuidv4()
     try {
-      appInsights.trackException({ error: combinedError })
+      appInsights.trackException(
+        { error: combinedError },
+        { appInsightsPropertiesRequestId }
+      )
     } catch (err) {
       console.log(err)
     }
+    logAppInsightsQueryUrl({
+      name: APP_INSIGHTS_QUERIES.REQUEST_BY_SESSION_ID_REQUEST_ID,
+      requestId: appInsightsPropertiesRequestId,
+      sessionId: appInsightsContextSessionId,
+    })
   }
 
   render() {
