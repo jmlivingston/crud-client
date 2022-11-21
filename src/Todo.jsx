@@ -10,7 +10,6 @@ import TodoRow from './TodoRow'
 
 function Todo() {
   const [showDetails, setShowDetails] = useState(false)
-  const [refresh, setRefresh] = useState(new Date())
   const [url, setUrl] = useState(BASE_URL)
   const [todo, setTodo] = useState({ name: '' })
   const [todos, setTodos] = useState({})
@@ -19,27 +18,32 @@ function Todo() {
   const [viewTodo, setViewTodo] = useState({})
   const [error, setError] = useState()
 
-  useEffect(() => {
-    ;(async () => {
-      setError()
-      try {
-        const response = await fetchHelper(url)
-        if (response.ok) {
-          const json = await response.json()
-          const formattedJson = json.reduce(
-            (acc, value) => ({ ...acc, [value.id]: value }),
-            {}
-          )
-          setTodos(formattedJson)
-        } else {
-          throw response
-        }
-      } catch (error) {
-        setTodos({})
-        updateError(error)
+  const getData = async () => {
+    setError()
+    const { cancel, response } = await fetchHelper(url)
+    try {
+      if (response.ok) {
+        const json = await response.json()
+        const formattedJson = json.reduce(
+          (acc, value) => ({ ...acc, [value.id]: value }),
+          {}
+        )
+        setTodos(formattedJson)
+      } else {
+        throw response
       }
-    })()
-  }, [refresh])
+    } catch (error) {
+      setTodos({})
+      updateError(error)
+    }
+    return () => {
+      cancel()
+    }
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
 
   const updateError = async (response) => {
     let json = {}
@@ -155,7 +159,7 @@ function Todo() {
           onClick={() => setUrl(url === BASE_URL ? BASE_URL_BROKEN : BASE_URL)}>
           Toggle Base URL ({url === BASE_URL ? 'VALID' : 'INVALID'})
         </button>
-        <button onClick={() => setRefresh(new Date())}>GET</button>
+        <button onClick={() => getData()}>GET</button>
       </div>
       <hr />
       <h2>Todos</h2>

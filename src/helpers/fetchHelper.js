@@ -3,6 +3,7 @@ import { appInsights, logAppInsightsQueryUrl } from '../appInsights'
 import { APP_INSIGHTS } from '../CONSTANTS'
 
 const fetchHelper = async (resource, options) => {
+  const abortController = new AbortController()
   const appInsightsPropertiesRequestId = uuidv4()
   const appInsightsContextSessionId = appInsights.context.session.id
   let response
@@ -14,6 +15,7 @@ const fetchHelper = async (resource, options) => {
   const updatedOptions = {
     ...options,
     headers,
+    signal: abortController.signal,
   }
   try {
     response = await fetch(resource, updatedOptions)
@@ -25,12 +27,16 @@ const fetchHelper = async (resource, options) => {
       url: response.url,
       json: () => Promise.resolve(json),
     }
-    appInsights.trackEvent({
-      name: APP_INSIGHTS.LOG_NAME,
-      request: { resource, options: updatedOptions },
-      requestId: appInsightsPropertiesRequestId,
-      response: json,
-    })
+    appInsights.trackEvent(
+      {
+        name: APP_INSIGHTS.LOG_NAME,
+      },
+      {
+        request: { resource, options: updatedOptions },
+        requestId: appInsightsPropertiesRequestId,
+        response: json,
+      }
+    )
     if (!response.ok) {
       logAppInsightsQueryUrl({
         isClient: false,
@@ -39,12 +45,16 @@ const fetchHelper = async (resource, options) => {
       })
     }
   } catch (error) {
-    appInsights.trackEvent({
-      error,
-      name: APP_INSIGHTS.LOG_NAME,
-      request: { resource, options: updatedOptions },
-      requestId: appInsightsPropertiesRequestId,
-    })
+    appInsights.trackEvent(
+      {
+        name: APP_INSIGHTS.LOG_NAME,
+      },
+      {
+        error,
+        request: { resource, options: updatedOptions },
+        requestId: appInsightsPropertiesRequestId,
+      }
+    )
     response = error
   }
   logAppInsightsQueryUrl({
@@ -54,7 +64,7 @@ const fetchHelper = async (resource, options) => {
     requestId: appInsightsPropertiesRequestId,
     sessionId: appInsightsContextSessionId,
   })
-  return response
+  return { cancel: abortController.abort, response }
 }
 
 export { fetchHelper }
