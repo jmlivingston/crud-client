@@ -1,12 +1,8 @@
 import React, { Component } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import {
-  appInsights,
-  APP_INSIGHTS_QUERIES,
-  logAppInsightsQueryUrl,
-} from './appInsights'
+import { appInsights, logAppInsightsQueryUrl } from './appInsights'
 import Code from './Code'
-import { STORAGE_KEYS } from './CONSTANTS'
+import { APP_INSIGHTS, STORAGE_KEYS } from './CONSTANTS'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -39,7 +35,9 @@ class ErrorBoundary extends Component {
       console.log(err)
     }
     logAppInsightsQueryUrl({
-      name: APP_INSIGHTS_QUERIES.REQUEST_BY_SESSION_ID_REQUEST_ID,
+      isClient: true,
+      method: 'info',
+      name: APP_INSIGHTS.QUERIES.REQUEST_BY_SESSION_ID_REQUEST_ID,
       requestId: appInsightsPropertiesRequestId,
       sessionId: appInsightsContextSessionId,
     })
