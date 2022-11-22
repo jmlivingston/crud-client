@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { appInsights } from './appInsights'
+import appInsights from './appInsights'
 import Code from './Code'
 import { getAppInsightsInfo, setAppInsightsInfo } from './helpers/storageHelper'
 

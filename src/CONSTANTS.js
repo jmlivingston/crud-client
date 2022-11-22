@@ -2,9 +2,12 @@ const BASE_URL_BROKEN = 'http://localhost:4000/todos-broken-path/'
 const BASE_URL = 'http://localhost:4000/todos/'
 
 const APP_INSIGHTS = Object.freeze({
+  CUSTOM_PROPERTIES: {
+    ENVIRONMENT: 'DEV',
+  },
   INSTANCE_NAME: import.meta.env.VITE_APP_INSIGHTS_INSTANCE_NAME,
   INSTRUMENTATION_KEY: import.meta.env.VITE_APP_INSTRUMENTATION_KEY,
-  LOG_NAME: 'CLIENT - TODOS',
+  LOG_NAME: 'CRUD-CLIENT',
   QUERIES: {
     REQUEST_BY_SESSION_ID_REQUEST_ID: 'REQUEST_BY_SESSION_ID_REQUEST_ID',
   },
@@ -13,8 +16,21 @@ const APP_INSIGHTS = Object.freeze({
   TENANT_ID: import.meta.env.VITE_APP_INSIGHTS_TENANT_ID,
 })
 
+const APP_NAME = 'CRUD'
+
+const CUSTOM_HEADERS = Object.freeze({
+  CRUD_API_LOG_URL: 'CRUD-API-LOG-URL',
+})
+
 const STORAGE_KEYS = Object.freeze({
   APP_INSIGHTS_INFO: 'APP_INSIGHTS_INFO',
 })
 
-export { APP_INSIGHTS, BASE_URL, BASE_URL_BROKEN, STORAGE_KEYS }
+export {
+  APP_INSIGHTS,
+  APP_NAME,
+  BASE_URL,
+  BASE_URL_BROKEN,
+  CUSTOM_HEADERS,
+  STORAGE_KEYS,
+}

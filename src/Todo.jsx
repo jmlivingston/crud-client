@@ -20,7 +20,7 @@ function Todo() {
 
   const getData = async () => {
     setError()
-    const { cancel, response } = await fetchHelper(url)
+    const { cancel, response } = await fetchHelper(url, { method: 'GET' })
     try {
       if (response.ok) {
         const json = await response.json()
@@ -138,7 +138,7 @@ function Todo() {
   const onView = async (id) => {
     try {
       setError()
-      const response = await fetchHelper(`${url}${id}`)
+      const response = await fetchHelper(`${url}${id}`, { method: 'GET' })
       if (response.ok) {
         const json = await response.json()
         setViewTodo(json)

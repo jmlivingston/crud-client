@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { appInsights, logAppInsightsQueryUrl } from './appInsights'
+import appInsights, { sessionId } from './appInsights'
 import Code from './Code'
 import { APP_INSIGHTS, STORAGE_KEYS } from './CONSTANTS'
+import { getAppInsightsLogUrl } from './helpers/logHelper'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -24,7 +25,6 @@ class ErrorBoundary extends Component {
     }
     const combinedError = { error, errorInfo: errorInfoFormatted }
     this.setState({ error: combinedError })
-    const appInsightsContextSessionId = appInsights.context.session.id
     const appInsightsPropertiesRequestId = uuidv4()
     try {
       appInsights.trackException(
@@ -34,13 +34,15 @@ class ErrorBoundary extends Component {
     } catch (err) {
       console.log(err)
     }
-    logAppInsightsQueryUrl({
-      isClient: true,
-      method: 'info',
-      name: APP_INSIGHTS.QUERIES.REQUEST_BY_SESSION_ID_REQUEST_ID,
-      requestId: appInsightsPropertiesRequestId,
-      sessionId: appInsightsContextSessionId,
-    })
+
+    const formattedUrl =
+      url ||
+      getAppInsightsLogUrl({
+        name: APP_INSIGHTS.QUERIES.REQUEST_BY_SESSION_ID_REQUEST_ID,
+        requestId: appInsightsPropertiesRequestId,
+        sessionId,
+      })
+    console.error(`Azure Log`, formattedUrl)
   }
 
   render() {
