@@ -68,17 +68,19 @@ const handleTelemetry = ({
 }) => {
   const resourcePath = new URL(resource).pathname
 
-  const logs = [
-    { name: 'API', url: response.headers.get(HEADERS.LOG_URL) },
-    {
+  let logs = []
+  if (tier === 'CLIENT') {
+    logs.push({ name: 'API', url: response?.headers?.get(HEADERS.LOG_URL) })
+  } else {
+    logs.push({
       name: 'Client',
       url: getLogUrl({
         appInsightsConfig,
         requestId,
         sessionId,
       }),
-    },
-  ]
+    })
+  }
 
   const { description, summary } = getIssueMarkdown({
     environment,
@@ -102,6 +104,7 @@ const handleTelemetry = ({
     requestId,
     resourcePath,
     response,
+    sessionId,
     summary,
     tier,
   })
@@ -130,6 +133,7 @@ const trackEvent = async ({
   requestId,
   resourcePath,
   response,
+  sessionId,
   summary,
   tier,
 }) => {
@@ -166,8 +170,7 @@ const trackEvent = async ({
     )
   } else {
     // node version
-    appInsights.context.tags['ai.session.id'] =
-      request.headers.appinsightscontextsessionid
+    appInsights.context.tags['ai.session.id'] = sessionId
     appInsights.trackEvent({
       name,
       properties: {
