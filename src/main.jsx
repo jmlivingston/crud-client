@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { AppInsightsContextProvider } from './AppInsightsContext'
+import { AppInsightsContextProvider } from './AppInsights/AppInsightsContext'
 import { APP_INSIGHTS } from './CONSTANTS'
 import ErrorBoundary from './ErrorBoundary'
 import './main.scss'

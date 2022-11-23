@@ -1,7 +1,10 @@
 import React, { useContext, useState } from 'react'
+import Code from '../Code'
+import {
+  getAppInsightsInfo,
+  setAppInsightsInfo,
+} from '../helpers/storageHelper'
 import { AppInsightsContext } from './AppInsightsContext'
-import Code from './Code'
-import { getAppInsightsInfo, setAppInsightsInfo } from './helpers/storageHelper'
 
 const AppInsightsInfo = () => {
   const { appInsights } = useContext(AppInsightsContext)

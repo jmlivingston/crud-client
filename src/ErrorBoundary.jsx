@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { AppInsightsContext } from './AppInsightsContext'
+import { AppInsightsContext } from './AppInsights/AppInsightsContext'
+import { getLogUrl } from './AppInsights/appInsightsHelper'
 import Code from './Code'
 import { APP_INSIGHTS, STORAGE_KEYS } from './CONSTANTS'
 
@@ -15,7 +16,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    const { appInsights, getLogUrl, sessionId } = this.context
+    const { appInsights, sessionId } = this.context
     const errorInfoFormatted = errorInfo
     if (errorInfo.componentStack) {
       errorInfoFormatted.componentStack = errorInfoFormatted.componentStack

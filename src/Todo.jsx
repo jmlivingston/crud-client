@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
-import { AppInsightsContext } from './AppInsightsContext'
-import AppInsightsInfo from './AppInsightsInfo'
+import { AppInsightsContext } from './AppInsights/AppInsightsContext'
+import AppInsightsInfo from './AppInsights/AppInsightsInfo'
 import Code from './Code'
 import { BASE_URL, BASE_URL_BROKEN } from './CONSTANTS'
 import { fetchHelper } from './helpers/fetchHelper'
@@ -10,7 +10,7 @@ import TodoHeader from './TodoHeader'
 import TodoRow from './TodoRow'
 
 function Todo() {
-  const { handleTelemetry } = useContext(AppInsightsContext)
+  const { appInsights } = useContext(AppInsightsContext)
   const [showDetails, setShowDetails] = useState(false)
   const [url, setUrl] = useState(BASE_URL)
   const [todo, setTodo] = useState({ name: '' })
@@ -25,7 +25,7 @@ function Todo() {
     const { cancel, response } = await fetchHelper({
       resource: url,
       options: { method: 'GET' },
-      handleTelemetry,
+      appInsights,
     })
     try {
       if (response.ok) {
@@ -85,7 +85,7 @@ function Todo() {
               modifiedDate: '2016-01-01',
             }),
           },
-          handleTelemetry,
+          appInsights,
         })
         if (response.ok) {
           setPutId()
@@ -106,7 +106,7 @@ function Todo() {
         options: {
           method: 'DELETE',
         },
-        handleTelemetry,
+        appInsights,
       })
       if (response.ok) {
         const { [todo.id]: _, ...filteredTodos } = todos
@@ -138,7 +138,7 @@ function Todo() {
           method: 'POST',
           body: JSON.stringify(newTodo),
         },
-        handleTelemetry,
+        appInsights,
       })
       if (response.ok) {
         const json = await response.json()
@@ -159,7 +159,7 @@ function Todo() {
       const response = await fetchHelper({
         resource: `${url}${id}`,
         options: { method: 'GET' },
-        handleTelemetry,
+        appInsights,
       })
       if (response.ok) {
         const json = await response.json()
