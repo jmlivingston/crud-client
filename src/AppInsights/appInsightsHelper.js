@@ -158,7 +158,7 @@ const trackEvent = async ({
     response: responseFormatted,
     tier,
   }
-  if (tier === 'CLIENT') {
+  if (tier.toUpperCase() === 'CLIENT') {
     // web version
     appInsights.trackEvent(
       {
