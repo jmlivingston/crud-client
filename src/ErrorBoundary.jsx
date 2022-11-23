@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import appInsights, { sessionId } from './appInsights'
+import { AppInsightsContext } from './AppInsightsContext'
 import Code from './Code'
 import { APP_INSIGHTS, STORAGE_KEYS } from './CONSTANTS'
-import { getAppInsightsLogUrl } from './helpers/logHelper'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -16,6 +15,7 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    const { appInsights, getLogUrl, sessionId } = this.context
     const errorInfoFormatted = errorInfo
     if (errorInfo.componentStack) {
       errorInfoFormatted.componentStack = errorInfoFormatted.componentStack
@@ -37,8 +37,8 @@ class ErrorBoundary extends Component {
 
     const formattedUrl =
       url ||
-      getAppInsightsLogUrl({
-        name: APP_INSIGHTS.QUERIES.REQUEST_BY_SESSION_ID_REQUEST_ID,
+      getLogUrl({
+        appInsightsConfig: APP_INSIGHTS,
         requestId: appInsightsPropertiesRequestId,
         sessionId,
       })
@@ -65,5 +65,7 @@ class ErrorBoundary extends Component {
     return this.props.children
   }
 }
+
+ErrorBoundary.contextType = AppInsightsContext
 
 export default ErrorBoundary

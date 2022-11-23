@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { AppInsightsContext } from './AppInsightsContext'
 import AppInsightsInfo from './AppInsightsInfo'
 import Code from './Code'
 import { BASE_URL, BASE_URL_BROKEN } from './CONSTANTS'
@@ -9,6 +10,7 @@ import TodoHeader from './TodoHeader'
 import TodoRow from './TodoRow'
 
 function Todo() {
+  const { handleTelemetry } = useContext(AppInsightsContext)
   const [showDetails, setShowDetails] = useState(false)
   const [url, setUrl] = useState(BASE_URL)
   const [todo, setTodo] = useState({ name: '' })
@@ -20,7 +22,11 @@ function Todo() {
 
   const getData = async () => {
     setError()
-    const { cancel, response } = await fetchHelper(url, { method: 'GET' })
+    const { cancel, response } = await fetchHelper({
+      resource: url,
+      options: { method: 'GET' },
+      handleTelemetry,
+    })
     try {
       if (response.ok) {
         const json = await response.json()
@@ -66,16 +72,20 @@ function Todo() {
     } else {
       try {
         setError()
-        const response = await fetchHelper(`${url}${todo.id}`, {
-          method: 'PUT',
-          body: JSON.stringify({
-            ...todo,
-            completed: true,
-            createdById: 2,
-            createdDate: '2016-01-01',
-            modifiedById: 2,
-            modifiedDate: '2016-01-01',
-          }),
+        const response = await fetchHelper({
+          resource: `${url}${todo.id}`,
+          options: {
+            method: 'PUT',
+            body: JSON.stringify({
+              ...todo,
+              completed: true,
+              createdById: 2,
+              createdDate: '2016-01-01',
+              modifiedById: 2,
+              modifiedDate: '2016-01-01',
+            }),
+          },
+          handleTelemetry,
         })
         if (response.ok) {
           setPutId()
@@ -91,8 +101,12 @@ function Todo() {
   const onDelete = async (todo) => {
     try {
       setError()
-      const response = await fetchHelper(`${url}${todo.id}`, {
-        method: 'DELETE',
+      const response = await fetchHelper({
+        resource: `${url}${todo.id}`,
+        options: {
+          method: 'DELETE',
+        },
+        handleTelemetry,
       })
       if (response.ok) {
         const { [todo.id]: _, ...filteredTodos } = todos
@@ -118,9 +132,13 @@ function Todo() {
         modifiedById: 2,
         modifiedDate: formattedDate,
       }
-      const response = await fetchHelper(url, {
-        method: 'POST',
-        body: JSON.stringify(newTodo),
+      const response = await fetchHelper({
+        resource: url,
+        options: {
+          method: 'POST',
+          body: JSON.stringify(newTodo),
+        },
+        handleTelemetry,
       })
       if (response.ok) {
         const json = await response.json()
@@ -138,7 +156,11 @@ function Todo() {
   const onView = async (id) => {
     try {
       setError()
-      const response = await fetchHelper(`${url}${id}`, { method: 'GET' })
+      const response = await fetchHelper({
+        resource: `${url}${id}`,
+        options: { method: 'GET' },
+        handleTelemetry,
+      })
       if (response.ok) {
         const json = await response.json()
         setViewTodo(json)

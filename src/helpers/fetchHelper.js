@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
-import { sessionId } from '../appInsights'
-import { handleTracking } from './logHelper'
+import { APP_INSIGHTS, APP_NAME, ENVIRONMENT } from '../CONSTANTS'
+import { getAppInsightsInfo } from './storageHelper'
 
-const fetchHelper = async (resource, options) => {
+const fetchHelper = async ({ resource, options, handleTelemetry }) => {
   const abortController = new AbortController()
   const resourcePath = new URL(resource).pathname
   const appInsightsPropertiesRequestId = uuidv4()
-  const appInsightsContextSessionId = sessionId
+  const appInsightsContextSessionId = getAppInsightsInfo().session.id
 
   options = {
     ...options,
@@ -30,7 +30,10 @@ const fetchHelper = async (resource, options) => {
     url: response.url,
   }
 
-  handleTracking({
+  handleTelemetry({
+    appInsightsConfig: APP_INSIGHTS,
+    environment: ENVIRONMENT,
+    name: APP_NAME,
     options,
     requestId: appInsightsPropertiesRequestId,
     resource,
