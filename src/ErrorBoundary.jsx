@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { AppInsightsContext } from './AppInsights/AppInsightsContext'
+import { appInsights } from './AppInsights/appInsights'
 import { getLogUrl } from './AppInsights/appInsightsHelper'
 import Code from './Code'
 import { APP_INSIGHTS, STORAGE_KEYS } from './CONSTANTS'
+import { getAppInsightsInfo } from './helpers/storageHelper'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -16,7 +17,9 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    const { appInsights, sessionId } = this.context
+    const {
+      info: { sessionId },
+    } = getAppInsightsInfo()
     const errorInfoFormatted = errorInfo
     if (errorInfo.componentStack) {
       errorInfoFormatted.componentStack = errorInfoFormatted.componentStack
@@ -36,13 +39,11 @@ class ErrorBoundary extends Component {
       console.log(err)
     }
 
-    const formattedUrl =
-      url ||
-      getLogUrl({
-        appInsightsConfig: APP_INSIGHTS,
-        requestId: appInsightsPropertiesRequestId,
-        sessionId,
-      })
+    const formattedUrl = getLogUrl({
+      appInsightsConfig: APP_INSIGHTS,
+      requestId: appInsightsPropertiesRequestId,
+      sessionId,
+    })
     console.error(`Azure Log`, formattedUrl)
   }
 
@@ -66,7 +67,5 @@ class ErrorBoundary extends Component {
     return this.props.children
   }
 }
-
-ErrorBoundary.contextType = AppInsightsContext
 
 export default ErrorBoundary

@@ -166,8 +166,19 @@ const trackEvent = async ({
     response: responseFormatted,
     tier,
   }
-  if (tier.toUpperCase() === 'CLIENT') {
+  if (appInsights.defaultClient) {
+    // node version
+    appInsights.defaultClient.context.session.id = sessionId
+    appInsights.defaultClient.context.tags['ai.session.id'] = sessionId
+    appInsights.defaultClient.trackEvent({
+      name,
+      properties: {
+        ...customDimensions,
+      },
+    })
+  } else {
     // web version
+    appInsights.context.session.id = sessionId
     appInsights.trackEvent(
       {
         name,
@@ -176,15 +187,6 @@ const trackEvent = async ({
         ...customDimensions,
       }
     )
-  } else {
-    // node version
-    appInsights.context.tags['ai.session.id'] = sessionId
-    appInsights.trackEvent({
-      name,
-      properties: {
-        ...customDimensions,
-      },
-    })
   }
 }
 

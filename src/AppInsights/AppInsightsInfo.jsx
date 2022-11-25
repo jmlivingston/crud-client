@@ -1,11 +1,16 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import Code from '../Code'
-import { setAppInsightsInfo } from '../helpers/storageHelper'
+import {
+  getAppInsightsInfo,
+  setAppInsightsInfo,
+} from '../helpers/storageHelper'
 import { appInsights } from './appInsights'
-import { AppInsightsContext } from './AppInsightsContext'
+import { setSessionId } from './appInsightsHelper'
 
 const AppInsightsInfo = () => {
-  const { sessionId, setSessionId } = useContext(AppInsightsContext)
+  const {
+    session: { id: sessionId },
+  } = getAppInsightsInfo()
 
   const onSetAppInsightsInfo = () => {
     const info = setAppInsightsInfo()
