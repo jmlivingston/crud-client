@@ -3,7 +3,7 @@ const HEADERS = Object.freeze({
   LOG_URL: 'LOG-URL',
 })
 
-// TODO: Can we expose appInsightsConfig variables? Should we move to API?
+// TODO: Except for INSTRUMENTATION_KEY which we need, can we expose appInsightsConfig variables? Should we move to API?
 const getLogUrl = ({
   appInsightsConfig, // Constant with INSTANCE_NAME, INSTRUMENTATION_KEY, NAME, RESOURCE_GROUP, SUBSCRIPTION_ID, and TENANT_ID
   requestId, // unique id for this request
