@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import appInsights from '../AppInsights/appInsights'
+import { appInsights } from '../AppInsights/appInsights'
 import { handleTelemetry } from '../AppInsights/appInsightsHelper.js'
 import { APP_INSIGHTS, ENVIRONMENT } from '../CONSTANTS'
 import { getAppInsightsInfo } from './storageHelper'

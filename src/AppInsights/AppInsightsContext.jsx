@@ -1,22 +1,25 @@
 import PropTypes from 'prop-types'
 import React, { createContext, useEffect, useMemo, useState } from 'react'
-import appInsights from './appInsights'
+import { appInsights, init } from './appInsights'
 
 const AppInsightsContext = createContext()
 
-const AppInsightsContextProvider = ({ children, sessionId }) => {
+const AppInsightsContextProvider = ({
+  children,
+  instrumentationKey,
+  sessionId,
+}) => {
   const [currentSessionId, setSessionId] = useState(sessionId)
-  useEffect(() => {
-    if (appInsights && sessionId) {
-      appInsights.context.session.id = sessionId
-    }
-  }, [appInsights, sessionId])
 
   useEffect(() => {
-    if (appInsights) {
-      appInsights.context.session.id = currentSessionId
+    init({ instrumentationKey })
+  }, [instrumentationKey])
+
+  useEffect(() => {
+    if (appInsights && (currentSessionId || sessionId)) {
+      setSessionId(currentSessionId || sessionId)
     }
-  }, [appInsights, currentSessionId])
+  }, [appInsights, currentSessionId, sessionId])
 
   const value = useMemo(
     () => ({
@@ -35,6 +38,7 @@ const AppInsightsContextProvider = ({ children, sessionId }) => {
 
 AppInsightsContextProvider.propTypes = {
   children: PropTypes.node,
+  instrumentationKey: PropTypes.string,
   sessionId: PropTypes.string,
 }
 

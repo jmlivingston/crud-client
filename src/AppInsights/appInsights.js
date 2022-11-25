@@ -1,16 +1,16 @@
 import { ApplicationInsights } from '@microsoft/applicationinsights-web'
-import { APP_INSIGHTS } from '../CONSTANTS'
 
+// eslint-disable-next-line import/no-mutable-exports
 let appInsights
 
-if (!appInsights) {
+const init = ({ instrumentationKey }) => {
   appInsights = new ApplicationInsights({
     config: {
-      instrumentationKey: APP_INSIGHTS.INSTRUMENTATION_KEY,
+      instrumentationKey,
     },
   })
   appInsights.loadAppInsights()
   appInsights.trackPageView()
 }
 
-export default appInsights
+export { appInsights, init }

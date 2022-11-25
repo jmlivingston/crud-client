@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import Code from '../Code'
 import { setAppInsightsInfo } from '../helpers/storageHelper'
-import appInsights from './appInsights'
+import { appInsights } from './appInsights'
 import { AppInsightsContext } from './AppInsightsContext'
 
 const AppInsightsInfo = () => {
@@ -12,7 +12,7 @@ const AppInsightsInfo = () => {
     setSessionId(info.session.id)
   }
 
-  return (
+  return appInsights ? (
     <>
       <h2>AppInsightsInfo</h2>
       Used to mimic a session that can be sent to Application Insights.
@@ -25,7 +25,7 @@ const AppInsightsInfo = () => {
       <Code code={appInsights.config} title="App Insights - config" />
       <Code code={appInsights.context} title="App Insights - context" />
     </>
-  )
+  ) : null
 }
 
 export default AppInsightsInfo

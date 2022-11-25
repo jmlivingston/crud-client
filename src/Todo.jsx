@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import appInsights from './AppInsights/appInsights'
 import AppInsightsInfo from './AppInsights/AppInsightsInfo'
 import Code from './Code'
 import { BASE_URL, BASE_URL_BROKEN } from './CONSTANTS'
@@ -24,7 +23,6 @@ function Todo() {
     const { cancel, response } = await fetchHelper({
       resource: url,
       options: { method: 'GET' },
-      appInsights,
     })
     try {
       if (response.ok) {
@@ -84,7 +82,6 @@ function Todo() {
               modifiedDate: '2016-01-01',
             }),
           },
-          appInsights,
         })
         if (response.ok) {
           setPutId()
@@ -105,7 +102,6 @@ function Todo() {
         options: {
           method: 'DELETE',
         },
-        appInsights,
       })
       if (response.ok) {
         const { [todo.id]: _, ...filteredTodos } = todos
@@ -137,7 +133,6 @@ function Todo() {
           method: 'POST',
           body: JSON.stringify(newTodo),
         },
-        appInsights,
       })
       if (response.ok) {
         const json = await response.json()
@@ -158,7 +153,6 @@ function Todo() {
       const response = await fetchHelper({
         resource: `${url}${id}`,
         options: { method: 'GET' },
-        appInsights,
       })
       if (response.ok) {
         const json = await response.json()
