@@ -17,7 +17,7 @@ const AppInsightsContextProvider = ({
 
   useEffect(() => {
     if (appInsights && (currentSessionId || sessionId)) {
-      setSessionId(currentSessionId || sessionId)
+      setSessionId({ appInsights, sessionId: currentSessionId || sessionId })
     }
   }, [appInsights, currentSessionId, sessionId])
 

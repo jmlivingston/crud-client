@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const HEADERS = Object.freeze({
   LOG_URL: 'LOG-URL',
 })
@@ -125,8 +126,9 @@ const handleTelemetry = ({
   }
 }
 
-const setSessionId = ({ sessionId }) =>
-  (appInsights.context.session.id = sessionId)
+const setSessionId = ({ appInsights, sessionId }) => {
+  appInsights.context.session.id = sessionId
+}
 
 const trackEvent = async ({
   appInsights,
