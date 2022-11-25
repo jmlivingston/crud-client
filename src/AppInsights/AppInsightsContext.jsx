@@ -12,16 +12,20 @@ const AppInsightsContextProvider = ({
   const [appInsights, setAppInsights] = useState()
   const [currentSessionId, setSessionId] = useState(sessionId)
   useEffect(() => {
-    const appInsightsInstance = new ApplicationInsights({
-      config: {
-        instrumentationKey,
-      },
-    })
-    appInsightsInstance.loadAppInsights()
-    appInsightsInstance.trackPageView()
-    appInsightsInstance.context.session.id = sessionId
-    setAppInsights(appInsightsInstance)
-  }, [])
+    if (instrumentationKey && sessionId) {
+      const appInsightsInstance = new ApplicationInsights({
+        config: {
+          instrumentationKey,
+        },
+      })
+      appInsightsInstance.loadAppInsights()
+      appInsightsInstance.trackPageView()
+      appInsightsInstance.context.session.id = sessionId
+      setAppInsights(appInsightsInstance)
+      // TODO: How else to inject everywhere?
+      window.appInsights = appInsightsInstance
+    }
+  }, [sessionId])
 
   useEffect(() => {
     if (appInsights) {
@@ -38,11 +42,11 @@ const AppInsightsContextProvider = ({
     [appInsights, currentSessionId]
   )
 
-  return appInsights ? (
+  return (
     <AppInsightsContext.Provider value={value}>
       {children}
     </AppInsightsContext.Provider>
-  ) : null
+  )
 }
 
 AppInsightsContextProvider.propTypes = {

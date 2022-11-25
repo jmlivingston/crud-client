@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const HEADERS = Object.freeze({
   LOG_URL: 'LOG-URL',
 })
@@ -9,7 +10,9 @@ const getLogUrl = ({
 }) => {
   const { INSTANCE_NAME, NAME, RESOURCE_GROUP, SUBSCRIPTION_ID, TENANT_ID } =
     appInsightsConfig
+  // eslint-disable-next-line max-len
   const query = `customEvents | where session_Id == "${sessionId}" and name == "${NAME}" and customDimensions["requestId"] == "${requestId}"`
+  // eslint-disable-next-line max-len
   const url = `https://portal.azure.com/#@${TENANT_ID}/blade/Microsoft_Azure_Monitoring_Logs/LogsBlade/resourceId/%2Fsubscriptions%2F${SUBSCRIPTION_ID}%2FresourceGroups%2F${RESOURCE_GROUP}%2Fproviders%2Fmicrosoft.insights%2Fcomponents%2F${INSTANCE_NAME}/source/LogsBlade.AnalyticsShareLinkToQuery/query/${encodeURI(
     query
   )}/timespan/TIMESPAN`
@@ -24,6 +27,7 @@ const getIssueMarkdown = ({
   resourcePath,
   response,
 }) => {
+  // eslint-disable-next-line max-len
   const summary = `${name} - (${request.options.method}) ${resourcePath} - Error: ${response.status} (${response.statusText})`
 
   const description = `## Environment
@@ -43,7 +47,7 @@ ${JSON.stringify(response.data, null, 2)}
 \`\`\`
 
 ## Log URL
-${logs?.map(({ name, url }) => `- [${name}](${url})`).join('\n')}
+${logs?.map((log) => `- [${log.name}](${log.url})`).join('\n')}
 `
   return { description, summary }
 }
@@ -68,7 +72,7 @@ const handleTelemetry = ({
 }) => {
   const resourcePath = new URL(resource).pathname
 
-  let logs = []
+  const logs = []
   if (tier === 'CLIENT') {
     logs.push({ name: 'API', url: response?.headers?.get(HEADERS.LOG_URL) })
   } else {
@@ -158,25 +162,29 @@ const trackEvent = async ({
     response: responseFormatted,
     tier,
   }
-  if (tier.toUpperCase() === 'CLIENT') {
-    // web version
-    appInsights.trackEvent(
-      {
+  if (appInsights) {
+    if (tier.toUpperCase() === 'CLIENT') {
+      // web version
+      appInsights.trackEvent(
+        {
+          name,
+        },
+        {
+          ...customDimensions,
+        }
+      )
+    } else {
+      // node version
+      appInsights.context.tags['ai.session.id'] = sessionId
+      appInsights.trackEvent({
         name,
-      },
-      {
-        ...customDimensions,
-      }
-    )
+        properties: {
+          ...customDimensions,
+        },
+      })
+    }
   } else {
-    // node version
-    appInsights.context.tags['ai.session.id'] = sessionId
-    appInsights.trackEvent({
-      name,
-      properties: {
-        ...customDimensions,
-      },
-    })
+    console.log('App Insights is not configured.')
   }
 }
 
