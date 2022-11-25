@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
+import appInsights from '../AppInsights/appInsights'
 import { handleTelemetry } from '../AppInsights/appInsightsHelper.js'
 import { APP_INSIGHTS, ENVIRONMENT } from '../CONSTANTS'
 import { getAppInsightsInfo } from './storageHelper'
 
-const fetchHelper = async ({ resource, options, appInsights }) => {
+const fetchHelper = async ({ resource, options }) => {
   const abortController = new AbortController()
   const appInsightsPropertiesRequestId = uuidv4()
   const appInsightsContextSessionId = getAppInsightsInfo().session.id

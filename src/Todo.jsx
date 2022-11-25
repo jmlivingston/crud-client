@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react'
-import { AppInsightsContext } from './AppInsights/AppInsightsContext'
+import { useEffect, useState } from 'react'
+import appInsights from './AppInsights/appInsights'
 import AppInsightsInfo from './AppInsights/AppInsightsInfo'
 import Code from './Code'
 import { BASE_URL, BASE_URL_BROKEN } from './CONSTANTS'
@@ -10,7 +10,6 @@ import TodoHeader from './TodoHeader'
 import TodoRow from './TodoRow'
 
 function Todo() {
-  const { appInsights } = useContext(AppInsightsContext)
   const [showDetails, setShowDetails] = useState(false)
   const [url, setUrl] = useState(BASE_URL)
   const [todo, setTodo] = useState({ name: '' })

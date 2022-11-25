@@ -1,11 +1,11 @@
 import React, { useContext } from 'react'
 import Code from '../Code'
 import { setAppInsightsInfo } from '../helpers/storageHelper'
+import appInsights from './appInsights'
 import { AppInsightsContext } from './AppInsightsContext'
 
 const AppInsightsInfo = () => {
-  const { appInsights, sessionId, setSessionId } =
-    useContext(AppInsightsContext)
+  const { sessionId, setSessionId } = useContext(AppInsightsContext)
 
   const onSetAppInsightsInfo = () => {
     const info = setAppInsightsInfo()

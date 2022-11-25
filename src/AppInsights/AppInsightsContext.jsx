@@ -1,31 +1,16 @@
-import { ApplicationInsights } from '@microsoft/applicationinsights-web'
 import PropTypes from 'prop-types'
 import React, { createContext, useEffect, useMemo, useState } from 'react'
+import appInsights from './appInsights'
 
 const AppInsightsContext = createContext()
 
-const AppInsightsContextProvider = ({
-  children,
-  instrumentationKey,
-  sessionId,
-}) => {
-  const [appInsights, setAppInsights] = useState()
+const AppInsightsContextProvider = ({ children, sessionId }) => {
   const [currentSessionId, setSessionId] = useState(sessionId)
   useEffect(() => {
-    if (instrumentationKey && sessionId) {
-      const appInsightsInstance = new ApplicationInsights({
-        config: {
-          instrumentationKey,
-        },
-      })
-      appInsightsInstance.loadAppInsights()
-      appInsightsInstance.trackPageView()
-      appInsightsInstance.context.session.id = sessionId
-      setAppInsights(appInsightsInstance)
-      // TODO: How else to inject everywhere?
-      window.appInsights = appInsightsInstance
+    if (appInsights && sessionId) {
+      appInsights.context.session.id = sessionId
     }
-  }, [sessionId])
+  }, [appInsights, sessionId])
 
   useEffect(() => {
     if (appInsights) {
@@ -35,11 +20,10 @@ const AppInsightsContextProvider = ({
 
   const value = useMemo(
     () => ({
-      appInsights,
       sessionId: currentSessionId,
       setSessionId,
     }),
-    [appInsights, currentSessionId]
+    [currentSessionId]
   )
 
   return (
@@ -51,7 +35,6 @@ const AppInsightsContextProvider = ({
 
 AppInsightsContextProvider.propTypes = {
   children: PropTypes.node,
-  instrumentationKey: PropTypes.string,
   sessionId: PropTypes.string,
 }
 

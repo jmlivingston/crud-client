@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const HEADERS = Object.freeze({
   LOG_URL: 'LOG-URL',
 })
@@ -59,7 +58,7 @@ const getCreateIssueUrl = ({ description, summary }) => {
 }
 
 const handleTelemetry = ({
-  appInsights, // AppInsights Client Instance
+  appInsights,
   appInsightsConfig, // Constant with INSTANCE_NAME, INSTRUMENTATION_KEY, NAME, RESOURCE_GROUP, SUBSCRIPTION_ID, and TENANT_ID
   environment, // DEV, QA, PROD, etc
   logToConsole, // true || false
@@ -73,18 +72,17 @@ const handleTelemetry = ({
   const resourcePath = new URL(resource).pathname
 
   const logs = []
-  if (tier === 'CLIENT') {
+  if (tier.toUpperCase() === 'CLIENT') {
     logs.push({ name: 'API', url: response?.headers?.get(HEADERS.LOG_URL) })
-  } else {
-    logs.push({
-      name: 'Client',
-      url: getLogUrl({
-        appInsightsConfig,
-        requestId,
-        sessionId,
-      }),
-    })
   }
+  logs.push({
+    name: 'Client',
+    url: getLogUrl({
+      appInsightsConfig,
+      requestId,
+      sessionId,
+    }),
+  })
 
   const { description, summary } = getIssueMarkdown({
     environment,
@@ -162,30 +160,26 @@ const trackEvent = async ({
     response: responseFormatted,
     tier,
   }
-  if (appInsights) {
-    if (tier.toUpperCase() === 'CLIENT') {
-      // web version
-      appInsights.trackEvent(
-        {
-          name,
-        },
-        {
-          ...customDimensions,
-        }
-      )
-    } else {
-      // node version
-      appInsights.context.tags['ai.session.id'] = sessionId
-      appInsights.trackEvent({
+  if (tier.toUpperCase() === 'CLIENT') {
+    // web version
+    appInsights.trackEvent(
+      {
         name,
-        properties: {
-          ...customDimensions,
-        },
-      })
-    }
+      },
+      {
+        ...customDimensions,
+      }
+    )
   } else {
-    console.log('App Insights is not configured.')
+    // node version
+    appInsights.context.tags['ai.session.id'] = sessionId
+    appInsights.trackEvent({
+      name,
+      properties: {
+        ...customDimensions,
+      },
+    })
   }
 }
 
-export { getLogUrl, handleTelemetry }
+export { getLogUrl, handleTelemetry, HEADERS }
