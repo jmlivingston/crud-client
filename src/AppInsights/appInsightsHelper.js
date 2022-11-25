@@ -75,7 +75,12 @@ const handleTelemetry = ({
 
   const logs = []
   if (tier.toUpperCase() === 'CLIENT') {
-    logs.push({ name: 'API', url: response?.headers?.get(HEADERS.LOG_URL) })
+    logs.push({
+      name: 'API',
+      url: response?.headers?.get
+        ? response?.headers?.get(HEADERS.LOG_URL)
+        : response?.headers?.[HEADERS.LOG_URL],
+    })
   }
   logs.push({
     name: 'Client',
@@ -127,7 +132,11 @@ const handleTelemetry = ({
 }
 
 const setSessionId = ({ appInsights, sessionId }) => {
-  appInsights.context.session.id = sessionId
+  if (appInsights.defaultClient) {
+    appInsights.defaultClient.context.session.id = sessionId
+  } else {
+    appInsights.context.session.id = sessionId
+  }
 }
 
 const trackEvent = async ({
