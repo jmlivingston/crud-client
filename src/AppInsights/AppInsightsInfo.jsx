@@ -1,19 +1,24 @@
+import { nanoid } from 'nanoid'
 import React from 'react'
 import Code from '../Code'
-import {
-  getAppInsightsInfo,
-  setAppInsightsInfo,
-} from '../helpers/storageHelper'
+import { STORAGE_KEYS } from '../CONSTANTS'
 import { appInsights } from './appInsights'
-import { setSessionId } from './appInsightsHelper'
+import {
+  getSessionInfo,
+  setSessionId,
+  setSessionInfo,
+} from './appInsightsHelper'
 
 const AppInsightsInfo = () => {
   const {
     session: { id: sessionId },
-  } = getAppInsightsInfo()
+  } = getSessionInfo({ key: STORAGE_KEYS.APP_INSIGHTS_INFO })
 
-  const onSetAppInsightsInfo = () => {
-    const info = setAppInsightsInfo()
+  const onReset = () => {
+    const info = setSessionInfo({
+      key: STORAGE_KEYS.APP_INSIGHTS_INFO,
+      sessionId: nanoid(),
+    })
     setSessionId(info.session.id)
   }
 
@@ -24,7 +29,7 @@ const AppInsightsInfo = () => {
       <div className="row">
         <div className="col-9">ID: {sessionId}</div>
         <div className="col-3">
-          <button onClick={onSetAppInsightsInfo}>Reset</button>
+          <button onClick={onReset}>Reset</button>
         </div>
       </div>
       <Code code={appInsights.config} title="App Insights - config" />

@@ -1,10 +1,9 @@
+import { nanoid } from 'nanoid'
 import React, { Component } from 'react'
-import { v4 as uuidv4 } from 'uuid'
 import { appInsights } from './AppInsights/appInsights'
-import { getLogUrl } from './AppInsights/appInsightsHelper'
+import { getLogUrl, getSessionInfo } from './AppInsights/appInsightsHelper'
 import Code from './Code'
 import { APP_INSIGHTS, STORAGE_KEYS } from './CONSTANTS'
-import { getAppInsightsInfo } from './helpers/storageHelper'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -19,7 +18,7 @@ class ErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     const {
       info: { sessionId },
-    } = getAppInsightsInfo()
+    } = getSessionInfo({ key: STORAGE_KEYS.APP_INSIGHTS_INFO })
     const errorInfoFormatted = errorInfo
     if (errorInfo.componentStack) {
       errorInfoFormatted.componentStack = errorInfoFormatted.componentStack
@@ -29,7 +28,7 @@ class ErrorBoundary extends Component {
     }
     const combinedError = { error, errorInfo: errorInfoFormatted }
     this.setState({ error: combinedError })
-    const appInsightsPropertiesRequestId = uuidv4()
+    const appInsightsPropertiesRequestId = nanoid()
     try {
       appInsights.trackException(
         { error: combinedError },
@@ -55,7 +54,7 @@ class ErrorBoundary extends Component {
           Try Clearning Storage Keys?
           <button
             onClick={() => {
-              localStorage.removeItem(STORAGE_KEYS.APP_INSIGHTS_INFO)
+              sessionStorage.removeItem(STORAGE_KEYS.APP_INSIGHTS_INFO)
               location.reload()
             }}>
             Clear

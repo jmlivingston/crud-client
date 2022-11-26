@@ -1,13 +1,17 @@
-import { v4 as uuidv4 } from 'uuid'
+import { nanoid } from 'nanoid'
 import { appInsights } from '../AppInsights/appInsights'
-import { handleTelemetry } from '../AppInsights/appInsightsHelper.js'
-import { APP_INSIGHTS, ENVIRONMENT } from '../CONSTANTS'
-import { getAppInsightsInfo } from './storageHelper'
+import {
+  getSessionInfo,
+  handleTelemetry,
+} from '../AppInsights/appInsightsHelper.js'
+import { APP_INSIGHTS, ENVIRONMENT, STORAGE_KEYS } from '../CONSTANTS'
 
 const fetchHelper = async ({ resource, options }) => {
   const abortController = new AbortController()
-  const appInsightsPropertiesRequestId = uuidv4()
-  const appInsightsContextSessionId = getAppInsightsInfo().session.id
+  const appInsightsPropertiesRequestId = nanoid()
+  const appInsightsContextSessionId = getSessionInfo({
+    key: STORAGE_KEYS.APP_INSIGHTS_INFO,
+  }).session.id
 
   options = {
     ...options,
