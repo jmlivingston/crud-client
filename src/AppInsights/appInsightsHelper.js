@@ -62,7 +62,7 @@ const getCreateIssueUrl = ({ description, summary }) => {
 const getSessionInfo = ({ key }) => {
   const infoString = sessionStorage.getItem(key)
   const info = infoString ? JSON.parse(infoString) : {}
-  if (info?.session?.id !== undefined) {
+  if (info?.session?.id === undefined) {
     throw new Error(
       'App Insights Session must be set using setSessionId before getting.'
     )
@@ -140,6 +140,10 @@ const handleTelemetry = ({
     console.log(`Summary: ${summary}\n\nDescription:\n${description}`)
     console.groupEnd()
   }
+}
+
+const removeSessionInfo = ({ key }) => {
+  sessionStorage.removeItem(key)
 }
 
 const setSessionId = ({ appInsights, sessionId }) => {
@@ -221,6 +225,7 @@ export {
   getSessionInfo,
   handleTelemetry,
   HEADERS,
+  removeSessionInfo,
   setSessionId,
   setSessionInfo,
 }
